@@ -16,7 +16,7 @@ For example a user holding tokens on Optimism can trade with a user that holds t
  
 Integrum also implements Uniswap V4 and Pancake swap V4 hooks. If the users get better prices in local liquidity pool, the default swap logic is executed locally. Otherwise, if the user can get a better market order price on a remote chain, they go through LayerZero and the tokens are bridged accordingly across chains. 
 
-We have deployed Integrum contracts on Ethereum Sepolia, Celo Alfajores, Base Sepolia, Scroll Sepolia, BNB Smart Chain Testnet and Optimism Sepolia. The order matching engine is deployed on Arbitrum Sepolia.
+We have deployed Integrum contracts on Ethereum Sepolia, Celo Alfajores, Base Sepolia, Scroll Sepolia, Linea Sepolia, BNB Smart Chain Testnet and Optimism Sepolia. The order matching engine is deployed on Arbitrum Sepolia.
 
 ### Architecture
 
@@ -46,6 +46,10 @@ So what if we reach the limit that Arbitrum Stylus supports through it’s WASM 
 
 The OrderMatching contract is implemented in Rust [here](order-matcher/src/lib.rs).
 
+| Chain            | OrderMatcher                                | OrderMatcherWrapper                               
+| ---------------- | ------------------------------------------- | ------------------------------------------ |
+| Arbitrum         | 0xAEC85ff2A37Ac2E0F277667bFc1Ce1ffFa6d782A  | 0x3A274DD833726D9CfDb6cBc23534B2cF5e892347 |                                     
+
 ### LayerZero
 
 To communitcate between chains, IntegrumSwap uses LayerZero. For the hackathon we have deployed end-points to Ethereum, Arbitrum, Optimism, Scroll, Base and Celo. They are all Solidity contracts that send limit or market orders using LayerZero to the matching engine that lives on Arbitrum Stylus.
@@ -61,31 +65,29 @@ For market orders, IntegrumSwap implements a PancakeSwap hook. If the hook sees 
 
 ### Base
 
-Base, developed by Coinbase, offers a secure, low-cost, and developer-friendly environment. Its strong backing and integration with the Coinbase ecosystem provide a robust platform for expanding IntegrumSwap’s user base. Base’s focus on fostering innovation and scaling solutions aligns perfectly with our goal of providing a cutting-edge, cross-chain exchange.
-
-By deploying on these chains, IntegrumSwap leverages diverse and complementary strengths, ensuring broad accessibility, enhanced security, and superior performance for our users.
+The contracts MainContract and OrderPlacerProxy were deployed on Base to enable cross-chain swaps via LayerZero.
 
 ### Scroll
 
-Scroll was selected due to its scalability and EVM compatibility, which ensures a seamless developer experience and easy integration with existing Ethereum infrastructure. Scroll's zk-rollup technology offers high throughput and low transaction costs, making it an excellent choice for a decentralized exchange that requires efficient and cost-effective operations.
+The contracts MainContract and OrderPlacerProxy were deployed on Base to enable cross-chain swaps via LayerZero.
 
 ### Cello
 
-We chose Celo for its mission of financial inclusion and its mobile-first approach. Celo’s lightweight architecture makes it ideal for decentralized finance (DeFi) applications aimed at emerging markets, providing easy access to IntegrumSwap for a broader, global audience. Additionally, Celo's carbon-neutral blockchain aligns with our commitment to sustainability.
+The contracts MainContract and OrderPlacerProxy were deployed on Base to enable cross-chain swaps via LayerZero.
 
 ### Blockscout
 
-We use Blockscout as our blockchain explorer for its open-source nature and comprehensive feature set. Blockscout supports a wide range of blockchain networks and provides detailed insights into transactions, smart contract interactions, and token transfers. By integrating Blockscout, we ensure that users can easily verify and audit transactions, enhancing transparency and trust in IntegrumSwap. Blockscout's user-friendly interface and powerful analytics tools make it an invaluable resource for both developers and users, allowing seamless access to the source code and transaction history across all deployed networks.
+By integrating Blockscout, we ensure that users can easily verify and audit transactions, enhancing transparency and trust in IntegrumSwap. 
 
 
 #### Contract Addresses 
 
-| Chain            | MainContract                                | OrderMatcher                               | OrderPlacerProxy                         |
-| ---------------- | ------------------------------------------- | ------------------------------------------ |------------------------------------------|
-| Arbitrum         |                                             |                                            |                                          |
-| Ethereum         | 0xAEC85ff2A37Ac2E0F277667bFc1Ce1ffFa6d782A  | 0x3A274DD833726D9CfDb6cBc23534B2cF5e892347 |                                          |
-| Optimism         | 0x24b8cd32f93aC877D4Cc6da2369d73a6aC47Cb7b  | 0x58EE92DaDdF00334da39fb4Fab164c8662C794AD |                                          |
-| Scroll           | 0xf4661D0776Ee5171956b25417F7E320fE365C21E  | 0x3a6B3Aff418C7E50eE9F852D0bc7119296cc3644 |                                          |
-| Base             | 0xf4661D0776Ee5171956b25417F7E320fE365C21E  | 0x3a6B3Aff418C7E50eE9F852D0bc7119296cc3644 |                                          |
-| Cello            | 0xf4661D0776Ee5171956b25417F7E320fE365C21E  | 0x3a6B3Aff418C7E50eE9F852D0bc7119296cc3644 |                                          |
-| Binance          | 0xf4661D0776Ee5171956b25417F7E320fE365C21E  | 0x3a6B3Aff418C7E50eE9F852D0bc7119296cc3644 |                                          |
+| Chain            | MainContract                                | OrderPlacerProxy                              
+| ---------------- | ------------------------------------------- | ------------------------------------------ |
+| Ethereum         | 0xAEC85ff2A37Ac2E0F277667bFc1Ce1ffFa6d782A  | 0x3A274DD833726D9CfDb6cBc23534B2cF5e892347 |                                          
+| Linea            | 0xAEC85ff2A37Ac2E0F277667bFc1Ce1ffFa6d782A  | 0x3A274DD833726D9CfDb6cBc23534B2cF5e892347 |                                          
+| Optimism         | 0x24b8cd32f93aC877D4Cc6da2369d73a6aC47Cb7b  | 0x58EE92DaDdF00334da39fb4Fab164c8662C794AD |                                          
+| Scroll           | 0xf4661D0776Ee5171956b25417F7E320fE365C21E  | 0x3a6B3Aff418C7E50eE9F852D0bc7119296cc3644 |                                          
+| Base             | 0xf4661D0776Ee5171956b25417F7E320fE365C21E  | 0x3a6B3Aff418C7E50eE9F852D0bc7119296cc3644 |                                          
+| Cello            | 0xf4661D0776Ee5171956b25417F7E320fE365C21E  | 0x3a6B3Aff418C7E50eE9F852D0bc7119296cc3644 |                                          
+| Binance          | 0xf4661D0776Ee5171956b25417F7E320fE365C21E  | 0x3a6B3Aff418C7E50eE9F852D0bc7119296cc3644 |
