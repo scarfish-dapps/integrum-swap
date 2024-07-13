@@ -36,7 +36,7 @@ sol_storage! {
 impl OrderMatcher {
 
     pub fn place_limit_order(&mut self, user: Address, eid: U256, order_type: U256, token0: Address, token1: Address, mut amount: U256, price: U256) 
-    -> (U256, Address, U256, Address, I256, I256, I256, I256) {
+    -> (U256, Address, U256, Address, I256, I256, I256, I256, Address, Address) {
         let orders_length = self.orders_length.get();
         let order_id = orders_length;
 
@@ -60,6 +60,8 @@ impl OrderMatcher {
         let mut amount_token1_delta_user = I256::try_from(0).unwrap();
         let mut amount_token0_delta_other_user = I256::try_from(0).unwrap();
         let mut amount_token1_delta_other_user = I256::try_from(0).unwrap();
+        let mut other_token0 = Address::default();
+        let mut other_token1 = Address::default();
 
         let mut i = U256::from(0);
         while i < orders_length {
@@ -88,7 +90,8 @@ impl OrderMatcher {
                     amount_token1_delta_user = I256::try_from(matched_amount * price).unwrap();
                     amount_token0_delta_other_user = I256::try_from(matched_amount).unwrap();
                     amount_token1_delta_other_user = I256::try_from(matched_amount * price).unwrap();
-
+                    other_token0 = self.orders_token0.get(i);
+                    other_token1 = self.orders_token1.get(i);
                     break;
                 }
             }
@@ -105,7 +108,7 @@ impl OrderMatcher {
             self.orders_is_filled.setter(order_id).set(false);
         }
 
-        (orders_length, user, other_eid, other_user, amount_token0_delta_user, amount_token1_delta_user, amount_token0_delta_other_user, amount_token1_delta_other_user)
+        (orders_length, user, other_eid, other_user, amount_token0_delta_user, amount_token1_delta_user, amount_token0_delta_other_user, amount_token1_delta_other_user, other_token0, other_token1)
     }
 
     pub fn retrieve_limit_order(&self, index: U256) -> (U256, Address, U256, U256, Address, Address, U256, U256, U256, bool, bool) {
