@@ -3,6 +3,9 @@ import styles from "./index.module.css";
 import { useWeb3ModalProvider } from "@web3modal/ethers/react";
 import { getTokenByAddress, trimAddress } from "../../utils";
 import { GET_CONTRACT } from "../../ContractUtils";
+import { setLoading } from "../../store/spiner/spinerSlice";
+import { useAppDispatch } from "../../store/hooks";
+import ModalComponent from "../modal/Modal";
 
 interface OrderResponse {
 	id: string;
@@ -19,9 +22,14 @@ interface OrderResponse {
 const ordersIdx = [0, 1, 2, 3, 4, 5];
 
 const OrdersHistory: React.FC = () => {
+	const dispatch = useAppDispatch();
 	const { walletProvider } = useWeb3ModalProvider();
 	const [isLoading, setIsLoading] = useState(false);
 	const [orders, setOrders] = useState<any[]>([]);
+	
+	const [showModal, setShowModal] = useState(false);
+	const [txHash, setTxhash] = useState('');
+	const [message, setMessage] = useState('');
 	
 	useEffect(() => {
 		if (walletProvider) {
@@ -60,6 +68,34 @@ const OrdersHistory: React.FC = () => {
 		}
 	}
 	
+	const handleClose = () => setShowModal(false);
+	
+	const cancelOrder = async (orderId: number) => {
+		if (!walletProvider) {
+			alert('Please connect your wallet');
+			return;
+		}
+		console.log('contract details: ');
+		const contract = await GET_CONTRACT(walletProvider);
+		console.log('contract details: ', contract);
+		
+		try {
+			dispatch(setLoading(true));
+			const tx = await contract.cancelLimitOrder(orderId);
+			console.log('Transaction sent:', tx);
+			const receipt = await tx.wait();
+			dispatch(setLoading(false));
+			setTxhash(receipt.hash);
+			setMessage('Order Cancelled');
+			setShowModal(true);
+			
+			console.log('Transaction confirmed:', receipt);
+		} catch (e) {
+			dispatch(setLoading(false));
+			console.log('error: ', e);
+		}
+	}
+	
 	const spinner = () => (
 		<div className={styles.spinnerContainer}>
 			<div className="spinner-border text-primary" role="status">
@@ -92,7 +128,10 @@ const OrdersHistory: React.FC = () => {
 			<td>{trimAddress(user)}</td>
 			<td className={`${isFilled ? 'text-danger' : 'text-success'} fw-bold`}>{isFilled ? 'FILLED' : 'OPEN'}</td>
 			<td>
-				<button className={`btn btn-primary bg-main border-0  ${isFilled && 'disabled'}`}>Cancel</button>
+				<button
+					className={`btn btn-primary bg-main border-0  ${isFilled && 'disabled'}`}
+					onClick={() => cancelOrder(Number(id))}
+				>Cancel</button>
 			</td>
 		</tr>
 	);
@@ -113,6 +152,8 @@ const OrdersHistory: React.FC = () => {
 					</table>
 				)}
 			</div>
+			<ModalComponent show={showModal} handleClose={handleClose} txHash={txHash}
+							title={message} />
 		</div>
 	);
 }

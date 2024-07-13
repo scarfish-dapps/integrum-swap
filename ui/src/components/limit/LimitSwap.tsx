@@ -5,7 +5,7 @@ import DropdownWithSearch from "../DropdownWithSearch.tsx/DropdownWithSearch";
 import { Token } from "../../client/tokens";
 import { CONFIRMED, ERC20_TOKENS, OrderType } from "../../utils";
 import SwapTabs from "../swapTabs/SwapTabs";
-import { BrowserProvider, Contract, parseUnits } from "ethers";
+import { parseUnits } from "ethers";
 import { useWeb3ModalProvider } from "@web3modal/ethers/react";
 import ModalComponent from "../modal/Modal";
 import { setLoading } from "../../store/spiner/spinerSlice";
@@ -15,11 +15,11 @@ const LimitSwap: React.FC = () => {
 	const { walletProvider } = useWeb3ModalProvider();
 	const dispatch = useAppDispatch();
 	
-	//0x1d4afd633c82aad08246bdad41223b8436d4e233
 	const balance = useAppSelector((state) => state.user.balance);
 	const [limitValue, setLimitValue] = useState<number>(0.0);
 	const [showModal, setShowModal] = useState(false);
 	const [txHash, setTxhash] = useState('');
+	const [message, setMessage] = useState('');
 	
 	const [value1, setValue1] = useState<number>(0.0);
 	const [selectedToken1, setSelectedToken1] = useState<Token>(ERC20_TOKENS[0]);
@@ -65,6 +65,7 @@ const LimitSwap: React.FC = () => {
 			const receipt = await tx.wait();
 			dispatch(setLoading(false));
 			setTxhash(receipt.hash);
+			setMessage(CONFIRMED);
 			setShowModal(true);
 			
 			console.log('Transaction confirmed:', receipt);
@@ -137,7 +138,7 @@ const LimitSwap: React.FC = () => {
 				</div>
 			</div>
 			<ModalComponent show={showModal} handleClose={handleClose} txHash={txHash}
-							title={CONFIRMED} />
+							title={message} />
 		</div>
 	);
 }
