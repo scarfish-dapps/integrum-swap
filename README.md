@@ -25,19 +25,27 @@ We have deployed Integrum contracts on Ethereum Sepolia, Celo Alfajores, Base Se
 ### How to run
 
 Build the main project.
-
+```
 forge build
-
+```
 
 Build Rust contract (Stylus)
-
+```
 cargo stylus check -e https://sepolia-rollup.arbitrum.io/rpc
-
+```
 
 Deploy OrderMatcher Rust contract
-
+```
 cargo stylus deploy --private-key=$PRIV_KEY -e https://sepolia-rollup.arbitrum.io/rpc
+```
 
+Frontend
+```
+cd ui
+yarn install
+yarn start
+```
+Open app on [http://localhost:3000](http://localhost:3000)
 
 ### Arbitrum Stylus
 
@@ -52,8 +60,16 @@ The OrderMatching contract is implemented in Rust [here](order-matcher/src/lib.r
 
 ### LayerZero
 
-To communitcate between chains, IntegrumSwap uses LayerZero. For the hackathon we have deployed end-points to Ethereum, Arbitrum, Optimism, Scroll, Base and Celo. They are all Solidity contracts that send limit or market orders using LayerZero to the matching engine that lives on Arbitrum Stylus.
+To communitcate between chains, IntegrumSwap uses LayerZero. For the hackathon we have deployed end-points to Ethereum, Optimism, Scroll, Base and Celo. They are all Solidity contracts that send limit or market orders using LayerZero to the matching engine that lives on Arbitrum Stylus.
 After the orders are matched, each individual endpoint uses OFT to settle the tokens.
+
+Deployed OFTs:
+
+| Name            | Symbol                                             | Optimism Sepolia                           | Ethereum Sepolia                           |
+| --------------- | -------------------------------------------------- | ------------------------------------------ | ------------------------------------------ | 
+| BrusselsOFT     | BOFT                                               | 0x40aDe76a75066c6f6Ef4Dd18AA6218592dEA0799 | 0xAe3C07deA15BB038B59191F24Ad1d18c76F9df83 |
+| IntegrumOFT     | IOFT                                               | 0xCCe7C75Eb1D1D710F1e60E1335a8F44f197FE2af | 0xAe3C07deA15BB038B59191F24Ad1d18c76F9df83 |
+
 
 ### Uniswap V4
 

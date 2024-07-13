@@ -24,26 +24,6 @@
     "type": "event"
   },
   {
-    "inputs": [],
-    "name": "cancelAllLimitOrders",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "orderId",
-        "type": "uint256"
-      }
-    ],
-    "name": "cancelLimitOrder",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "anonymous": false,
     "inputs": [
       {
@@ -155,6 +135,52 @@
     "type": "event"
   },
   {
+    "inputs": [],
+    "name": "cancelAllLimitOrders",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "orderId",
+        "type": "uint256"
+      }
+    ],
+    "name": "cancelLimitOrder",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "deployer",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getOrdersLength",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -261,32 +287,6 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_rustContractAddress",
-        "type": "address"
-      }
-    ],
-    "name": "setRustContractAddress",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "deployer",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "uint256",
         "name": "index",
         "type": "uint256"
@@ -361,6 +361,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_rustContractAddress",
+        "type": "address"
+      }
+    ],
+    "name": "setRustContractAddress",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]

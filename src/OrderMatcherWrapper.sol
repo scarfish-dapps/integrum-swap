@@ -185,7 +185,7 @@ contract OrderMatcherWrapper is OApp, IOrderMatcherWrapper {
     }
 
 
- function _lzReceive(
+    function _lzReceive(
         Origin calldata _origin,
         bytes32 _guid,
         bytes calldata payload,
@@ -233,5 +233,15 @@ contract OrderMatcherWrapper is OApp, IOrderMatcherWrapper {
 
     function getChainID() external view returns (uint256) {
         return block.chainid;
+    }
+    
+    function getOrdersLength() external view override returns (uint256) {
+        (bool success, bytes memory data) = rustContractAddress.staticcall(
+            abi.encodeWithSignature("getOrdersLength()")
+        );
+
+        require(success, "Failed to get orders length");
+
+        return abi.decode(data, (uint256));
     }
 }
