@@ -2,7 +2,7 @@
 
 This is our EthGlobal Brussels hackathon project.
 
-**IntegrumSwap** is a decentralised **cross chain exchange** that inherits the best of two worlds: AMMs like Uniswap and Coincidence of Wants dexes like CoWSwap.
+*IntegrumSwap* is a decentralised *cross chain exchange* that inherits the best of two worlds: AMMs like Uniswap and Coincidence of Wants dexes like CoWSwap.
 
 ![Comparison](Comparison.png)
 
@@ -25,19 +25,19 @@ We have deployed Integrum contracts on Ethereum Sepolia, Celo Alfajores, Base Se
 ### How to run
 
 Build the main project.
-```
+
 forge build
-```
+
 
 Build Rust contract (Stylus)
-```
+
 cargo stylus check -e https://sepolia-rollup.arbitrum.io/rpc
-```
+
 
 Deploy OrderMatcher Rust contract
-```
+
 cargo stylus deploy --private-key=$PRIV_KEY -e https://sepolia-rollup.arbitrum.io/rpc
-```
+
 
 ### Arbitrum Stylus
 
@@ -61,12 +61,23 @@ For market orders, IntegrumSwap implements a PancakeSwap hook. If the hook sees 
 
 ### Base
 
+Base, developed by Coinbase, offers a secure, low-cost, and developer-friendly environment. Its strong backing and integration with the Coinbase ecosystem provide a robust platform for expanding IntegrumSwap’s user base. Base’s focus on fostering innovation and scaling solutions aligns perfectly with our goal of providing a cutting-edge, cross-chain exchange.
+
+By deploying on these chains, IntegrumSwap leverages diverse and complementary strengths, ensuring broad accessibility, enhanced security, and superior performance for our users.
+
 ### Scroll
+
+Scroll was selected due to its scalability and EVM compatibility, which ensures a seamless developer experience and easy integration with existing Ethereum infrastructure. Scroll's zk-rollup technology offers high throughput and low transaction costs, making it an excellent choice for a decentralized exchange that requires efficient and cost-effective operations.
 
 ### Cello
 
+We chose Celo for its mission of financial inclusion and its mobile-first approach. Celo’s lightweight architecture makes it ideal for decentralized finance (DeFi) applications aimed at emerging markets, providing easy access to IntegrumSwap for a broader, global audience. Additionally, Celo's carbon-neutral blockchain aligns with our commitment to sustainability.
+
 ### Blockscout
-IntegrumSwap uses Blockscout for viewing source code and transactions. For the hackathon we have deployed end-points to Ethereum, Arbitrum, Optimism, Scroll, Base and Celo.
+
+We use Blockscout as our blockchain explorer for its open-source nature and comprehensive feature set. Blockscout supports a wide range of blockchain networks and provides detailed insights into transactions, smart contract interactions, and token transfers. By integrating Blockscout, we ensure that users can easily verify and audit transactions, enhancing transparency and trust in IntegrumSwap. Blockscout's user-friendly interface and powerful analytics tools make it an invaluable resource for both developers and users, allowing seamless access to the source code and transaction history across all deployed networks.
+
+
 #### Contract Addresses 
 
 | Chain            | MainContract                                | OrderMatcher                               | OrderPlacerProxy                         |
@@ -78,4 +89,3 @@ IntegrumSwap uses Blockscout for viewing source code and transactions. For the h
 | Base             | 0xf4661D0776Ee5171956b25417F7E320fE365C21E  | 0x3a6B3Aff418C7E50eE9F852D0bc7119296cc3644 |                                          |
 | Cello            | 0xf4661D0776Ee5171956b25417F7E320fE365C21E  | 0x3a6B3Aff418C7E50eE9F852D0bc7119296cc3644 |                                          |
 | Binance          | 0xf4661D0776Ee5171956b25417F7E320fE365C21E  | 0x3a6B3Aff418C7E50eE9F852D0bc7119296cc3644 |                                          |
-
