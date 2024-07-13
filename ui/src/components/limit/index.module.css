@@ -1,0 +1,57 @@
+.pAbsolute {
+    position: absolute;
+    top: 43.5%;
+    left: 50%;
+    transform: translate(-50%, 100%);
+    background: #dedfdf;
+    padding-left: 5px;
+    padding-right: 5px;
+    border: 2px solid #ffffff;
+    border-radius:10px;
+}
+
+.noArrows::-webkit-outer-spin-button,
+.noArrows::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.noArrows {
+    -moz-appearance: textfield;
+}
+
+
+.sellButton {
+    background-color: #FE208B;
+    color: #ffffff;
+
+}
+
+.sellButton:hover {
+    background-color: #FE208B;
+    color: black;
+}
+
+.roundedTable {
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 20px; /* Bootstrap rounded-4 equivalent */
+    overflow: hidden;
+}
+
+.spinnerContainer {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1050; /* Adjust as needed for your context */
+}
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+.spinner-border.text-primary {
+    color: #007bff; /* Adjust the color as needed */
+}
