@@ -8,40 +8,9 @@ import { Provider } from 'react-redux';
 import store from './store/store';
 import App from './App';
 import { BrowserRouter } from "react-router-dom";
+import { CHAINS } from "./utils";
 
 const projectId = '8ecc0ab4f5d37a554193f0a4552b99ab';
-const sepolia = {
-	chainId: 11155111,
-	name: 'Sepolia',
-	currency: 'ETH',
-	explorerUrl: 'https://sepolia.etherscan.io',
-	rpcUrl: 'https://rpc.sepolia.org'
-}
-
-const arbSepolia = {
-	chainId: 421614,
-	name: 'ArbSepolia',
-	currency: 'ETH',
-	explorerUrl: 'https://sepolia.arbiscan.io/',
-	rpcUrl: 'https://sepolia-rollup.arbitrum.io/rpc'
-}
-
-const bscTestnet = {
-	chainId: 97,
-	name: 'BSC Testnet',
-	currency: 'BNB',
-	explorerUrl: 'https://explorer.binance.org/smart-testnet',
-	rpcUrl: 'https://data-seed-prebsc-1-s1.binance.org:8545'
-}
-
-
-const mainnet = {
-	chainId: 1,
-	name: 'Ethereum Mainnet',
-	currency: 'ETH',
-	explorerUrl: 'https://etherscan.io',
-	rpcUrl: 'https://ethereum-rpc.publicnode.com'
-}
 
 const metadata = {
 	name: 'Integrum Swap',
@@ -64,7 +33,7 @@ const ethersConfig = defaultConfig({
 
 createWeb3Modal({
 	ethersConfig,
-	chains: [arbSepolia,bscTestnet, sepolia, mainnet],
+	chains: CHAINS,
 	projectId,
 	enableAnalytics: true // Optional - defaults to your Cloud configuration
 })

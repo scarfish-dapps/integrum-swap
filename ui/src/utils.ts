@@ -20,13 +20,13 @@ export enum SwapType {
 }
 
 
-export const ERC20_TOKENS:Token[] = [
+export const ERC20_TOKENS: Token[] = [
 	{
-		address:'0x41eE3643D5C2eD4a2D092a212E613340076a317e',
-		decimals:'18',
-		icon_url:'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
-		name:'Wrapped Ether',
-		symbol:'WETH'
+		address: '0x41eE3643D5C2eD4a2D092a212E613340076a317e',
+		decimals: '18',
+		icon_url: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+		name: 'Wrapped Ether',
+		symbol: 'WETH'
 	},
 	{
 		address: '0xaAe29B0366299461418F5324a79Afc425BE5ae21',
@@ -54,3 +54,34 @@ export const CONFIRMED = 'Transaction Confirmed 🎉';
 export const getTokenByAddress = (address: string): Token | undefined => {
 	return ERC20_TOKENS.find(token => token.address === address);
 }
+
+export const CHAINS = [
+	{
+		chainId: 421614,
+		name: 'ArbSepolia',
+		currency: 'ETH',
+		explorerUrl: 'https://sepolia.arbiscan.io/',
+		rpcUrl: 'https://sepolia-rollup.arbitrum.io/rpc'
+	},
+	{
+		chainId: 11155111,
+		name: 'Sepolia',
+		currency: 'ETH',
+		explorerUrl: 'https://sepolia.etherscan.io',
+		rpcUrl: 'https://rpc.sepolia.org'
+	},
+	{
+		chainId: 1,
+		name: 'Ethereum Mainnet',
+		currency: 'ETH',
+		explorerUrl: 'https://etherscan.io',
+		rpcUrl: 'https://ethereum-rpc.publicnode.com'
+	},
+	{
+		chainId: 97,
+		name: 'BSC Testnet',
+		currency: 'BNB',
+		explorerUrl: 'https://explorer.binance.org/smart-testnet',
+		rpcUrl: 'https://data-seed-prebsc-1-s1.binance.org:8545'
+	}
+];
