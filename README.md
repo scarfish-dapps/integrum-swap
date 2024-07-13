@@ -2,7 +2,7 @@
 
 This is our EthGlobal Brussels hackathon project.
 
-IntegrumSwap is a decentralised cross chain exchange that inherits the best of two worlds: AMMs like Uniswap and Coincidence of Wants dexes like CoWSwap.
+**IntegrumSwap** is a decentralised **cross chain exchange** that inherits the best of two worlds: AMMs like Uniswap and Coincidence of Wants dexes like CoWSwap.
 
 Uniswap runs on-chain and thus is decentralised, but we all know about the MEV and front-running issues. That happens mainly because AMMs do not work with fixed pricing of swaps and so someone can change the price of a token just before your order executes.
 IntegrumSwap does not suffer from these issues because like CoW Swap, it uses coincidence of wants to fulfill trade orders.
@@ -38,7 +38,7 @@ cargo stylus deploy --private-key=$PRIV_KEY -e https://sepolia-rollup.arbitrum.i
 IntegrumSwap uses Arbitrum Stylus to implement an order matching engine to which all the limit and market orders are sent. It is written as a smart contract in Rust.
 So what if we reach the limit that Arbitrum Stylus supports through it’s WASM VM? It should be easy to implement sharding with multiple matching engines each taking care of a slice of the orderbook.
 
-The OrderMatching contract is implemented here.
+The OrderMatching contract is implemented in Rust [here](order-matcher/src/lib.rs).
 
 ### LayerZero
 
