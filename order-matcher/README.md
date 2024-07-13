@@ -19,4 +19,4 @@ So what if we reach the limit that Arbitrum Stylus supports through it’s WASM 
 
 The OrderMatching contract is implemented in Rust [here](order-matcher/src/lib.rs).
 
-For the description of the entire project, see the [README](README.md) from the main project
+For the description of the entire project, see the [README](/README.md) from the main project
