@@ -144,14 +144,16 @@ impl OrderMatcher {
         }
     }
 
-    pub fn place_market_order(&mut self, order_type: U256, token0: Address, token1: Address, mut amount: U256) 
-    -> (Address, Address, I256, I256, I256, I256) {
-        let user = msg::sender();
+    pub fn place_market_order(&mut self, user: Address, _eid: U256, order_type: U256, token0: Address, token1: Address, mut amount: U256) 
+    -> (Address, U256, Address, I256, I256, I256, I256, Address, Address) {
+        let mut other_eid = U256::from(0);
         let mut other_user = Address::default();
         let mut amount_token0_delta_user = I256::try_from(0).unwrap();
         let mut amount_token1_delta_user = I256::try_from(0).unwrap();
         let mut amount_token0_delta_other_user = I256::try_from(0).unwrap();
         let mut amount_token1_delta_other_user = I256::try_from(0).unwrap();
+        let mut other_token0 = Address::default();
+        let mut other_token1 = Address::default();
 
         let mut i = U256::from(0);
         while i < self.orders_length.get() {
@@ -179,13 +181,15 @@ impl OrderMatcher {
                     amount_token1_delta_user = I256::try_from(matched_amount * matched_price).unwrap();
                     amount_token0_delta_other_user = I256::try_from(matched_amount).unwrap();
                     amount_token1_delta_other_user = I256::try_from(matched_amount * matched_price).unwrap();
-
+                    other_eid = self.orders_eid.get(i);
+                    other_token0 = self.orders_token0.get(i);
+                    other_token1 = self.orders_token1.get(i);
                     break;
                 }
             }
             i += U256::from(1);
         }
 
-        (user, other_user, amount_token0_delta_user, amount_token1_delta_user, amount_token0_delta_other_user, amount_token1_delta_other_user)
+        (user, other_eid, other_user, amount_token0_delta_user, amount_token1_delta_user, amount_token0_delta_other_user, amount_token1_delta_other_user, other_token0, other_token1)
     }
 }
