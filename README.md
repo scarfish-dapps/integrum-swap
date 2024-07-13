@@ -4,6 +4,8 @@ This is our EthGlobal Brussels hackathon project.
 
 **IntegrumSwap** is a decentralised **cross chain exchange** that inherits the best of two worlds: AMMs like Uniswap and Coincidence of Wants dexes like CoWSwap.
 
+![Comparison](Comparison.png)
+
 Uniswap runs on-chain and thus is decentralised, but we all know about the MEV and front-running issues. That happens mainly because AMMs do not work with fixed pricing of swaps and so someone can change the price of a token just before your order executes.
 IntegrumSwap does not suffer from these issues because like CoW Swap, it uses coincidence of wants to fulfill trade orders.
 CoW Swap uses off-chain order matching and thus is not decentralised and is vulnerable. IntegrumSwap runs the order matching engine on-chain using Arbitrum WASM VM. That is an order of magnitude faster than EVM with significantly lower gas fees. That is due to the superior efficiency of WASM programs. Also memory can be 100-500 times cheaper.
@@ -14,7 +16,11 @@ For example a user holding tokens on Optimism can trade with a user that holds t
  
 Integrum also implements Uniswap V4 and Pancake swap V4 hooks. If the users get better prices in local liquidity pool, the default swap logic is executed locally. Otherwise, if the user can get a better market order price on a remote chain, they go through LayerZero and the tokens are bridged accordingly across chains. 
 
-We have deployed Integrum contracts on Ethereum Sepolia, Celo Alfajores, Base Sepolia, Scroll Sepolia and Optimism Sepolia. The order matching engine is deployed on Arbitrum Sepolia.
+We have deployed Integrum contracts on Ethereum Sepolia, Celo Alfajores, Base Sepolia, Scroll Sepolia, BNB Smart Chain Testnet and Optimism Sepolia. The order matching engine is deployed on Arbitrum Sepolia.
+
+### Architecture
+
+![Architecture](Architecture.png)
 
 ### How to run
 
@@ -60,3 +66,16 @@ For market orders, IntegrumSwap implements a PancakeSwap hook. If the hook sees 
 ### Cello
 
 ### Blockscout
+IntegrumSwap uses Blockscout for viewing source code and transactions. For the hackathon we have deployed end-points to Ethereum, Arbitrum, Optimism, Scroll, Base and Celo.
+#### Contract Addresses 
+
+| Chain            | MainContract                                | OrderMatcher                               | OrderPlacerProxy                         |
+| ---------------- | ------------------------------------------- | ------------------------------------------ |------------------------------------------|
+| Arbitrum         |                                             |                                            |                                          |
+| Ethereum         | 0xAEC85ff2A37Ac2E0F277667bFc1Ce1ffFa6d782A  | 0x3A274DD833726D9CfDb6cBc23534B2cF5e892347 |                                          |
+| Optimism         | 0x24b8cd32f93aC877D4Cc6da2369d73a6aC47Cb7b  | 0x58EE92DaDdF00334da39fb4Fab164c8662C794AD |                                          |
+| Scroll           | 0xf4661D0776Ee5171956b25417F7E320fE365C21E  | 0x3a6B3Aff418C7E50eE9F852D0bc7119296cc3644 |                                          |
+| Base             | 0xf4661D0776Ee5171956b25417F7E320fE365C21E  | 0x3a6B3Aff418C7E50eE9F852D0bc7119296cc3644 |                                          |
+| Cello            | 0xf4661D0776Ee5171956b25417F7E320fE365C21E  | 0x3a6B3Aff418C7E50eE9F852D0bc7119296cc3644 |                                          |
+| Binance          | 0xf4661D0776Ee5171956b25417F7E320fE365C21E  | 0x3a6B3Aff418C7E50eE9F852D0bc7119296cc3644 |                                          |
+
