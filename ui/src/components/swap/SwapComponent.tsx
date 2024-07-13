@@ -1,12 +1,22 @@
 import React, { useState, ChangeEvent } from 'react';
-import { useAppSelector } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import S from './index.module.css';
 import DropdownWithSearch from "../DropdownWithSearch.tsx/DropdownWithSearch";
 import { Token } from "../../client/tokens";
-import { ERC20_TOKENS } from "../../utils";
+import { CONFIRMED, ERC20_TOKENS, OrderType } from "../../utils";
 import SwapTabs from "../swapTabs/SwapTabs";
+import { GET_CONTRACT } from "../../ContractUtils";
+import { setLoading } from "../../store/spiner/spinerSlice";
+import { parseUnits } from "ethers";
+import { useWeb3ModalProvider } from "@web3modal/ethers/react";
+import ModalComponent from "../modal/Modal";
 
 const SwapComponent: React.FC = () => {
+	const { walletProvider } = useWeb3ModalProvider();
+	const dispatch = useAppDispatch();
+	const [showModal, setShowModal] = useState(false);
+	const [txHash, setTxhash] = useState('');
+	
 	const balance = useAppSelector((state) => state.user.balance);
 	const [selectedToken1, setSelectedToken1] = useState<Token>(ERC20_TOKENS[0]);
 	const [value1, setValue1] = useState<number>(0.0);
@@ -22,9 +32,40 @@ const SwapComponent: React.FC = () => {
 		setValue2(parseFloat(e.target.value));
 	};
 	
+	const handleClose = () => setShowModal(false);
+	
+	const placeOrder = async () => {
+		if (!walletProvider) {
+			alert('Please connect your wallet');
+			return;
+		}
+		
+		const contract = await GET_CONTRACT(walletProvider);
+		
+		try {
+			dispatch(setLoading(true));
+			// Use the correct integer value for OrderType.SELL
+			const tx = await contract.placeMarketOrder(
+				OrderType.SELL,
+				selectedToken1.address,
+				selectedToken2.address,
+				parseUnits(value1.toString()),
+			);
+			console.log('Transaction sent:', tx);
+			const receipt = await tx.wait();
+			dispatch(setLoading(false));
+			setTxhash(receipt.hash);
+			setShowModal(true);
+			console.log('Transaction confirmed:', receipt);
+		} catch (e) {
+			dispatch(setLoading(false));
+			console.log('error: ', e);
+		}
+	};
+	
 	return (
 		<div className="card rounded-5" style={{ width: '32rem' }}>
-			<SwapTabs/>
+			<SwapTabs />
 			<div className="card-body">
 				<div className="bg-gray rounded-4 p-3">
 					<div className="d-flex justify-content-between">
@@ -59,11 +100,13 @@ const SwapComponent: React.FC = () => {
 				</div>
 				
 				<div className={`${S.sellButton} rounded-4 p-3 mt-3 c-pointer`}
-					 onClick={() => console.log('Sell')}>
-				
+					 onClick={placeOrder}>
+					
 					Sell ${selectedToken1.symbol}
 				</div>
 			</div>
+			<ModalComponent show={showModal} handleClose={handleClose} txHash={txHash}
+							title={CONFIRMED} />
 		</div>
 	);
 }
