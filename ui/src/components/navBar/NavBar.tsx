@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
-import logo from '../../assets/integrumBlack.png'; // Adjust the path according to the actual location
-import logo1 from '../../assets/integrumLogo.png'; // Adjust the path according to the actual location
+import logo from '../../assets/integrum.png'; // Adjust the path according to the actual location
 import S from './index.module.css';
 import { BrowserProvider, formatEther } from 'ethers';
 import { useWeb3ModalAccount, useWeb3ModalProvider, useWeb3Modal } from "@web3modal/ethers/react";
@@ -36,7 +35,7 @@ function NavBar() {
 		<nav className={`navbar ${S.navBar} border-0 rounded-5 z-3`}>
 			<div className="d-flex align-items-center">
 				<a className="navbar-brand ms-2" href="#">
-					<img src={logo1} alt="Logo" width="30" height="30"
+					<img src={logo} alt="Logo" width="30" height="30"
 						 className="d-inline-block align-text-top me-3 ms-3" />
 					<span className="fw-bold text-black">Integrum Swap</span>
 				</a>
