@@ -28,6 +28,8 @@ interface IOrderMatcher {
         int256 amount_token1_delta_other_users;
     }
 
+    enum OrderType { BUY, SELL }
+
     /// @notice Event emitted when an order is placed
     event OrderPlaced(uint256 orderId, address indexed user, uint256 orderType, address token0, address token1, uint256 amount, uint256 price);
 

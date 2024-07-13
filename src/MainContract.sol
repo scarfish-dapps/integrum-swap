@@ -1,6 +1,6 @@
 pragma solidity ^0.8.25;
 
-import {IOrderMatcher} from "./interfaces/IOrderMatcher.sol";
+import {IOrderMatcher} from "./IOrderMatcher.sol";
 import {PoolSwapTest} from "v4-core/src/test/PoolSwapTest.sol";
 import {PoolKey} from "v4-core/src/types/PoolKey.sol";
 import {IPoolManager} from "v4-core/src/interfaces/IPoolManager.sol";
@@ -9,6 +9,17 @@ import {Currency} from "v4-core/src/types/Currency.sol";
 import {IHooks} from "v4-core/src/interfaces/IHooks.sol";
 
 contract MainContract is IOrderMatcher {
+
+    uint160 public constant MIN_PRICE_LIMIT = TickMath.MIN_SQRT_PRICE + 1;
+    uint160 public constant MAX_PRICE_LIMIT = TickMath.MAX_SQRT_PRICE - 1;
+
+    PoolSwapTest public swapRouter;
+    address entryPointHook;
+
+    constructor(PoolSwapTest _swapRouter, address hook) {
+        swapRouter = _swapRouter;
+        entryPointHook = hook;
+    }
 
     /// @inheritdoc IOrderMatcher
     function placeLimitOrder(uint256 orderType, address token0, address token1, uint256 amount, uint256 price) external override 
@@ -30,8 +41,8 @@ contract MainContract is IOrderMatcher {
     }
 
     /// @inheritdoc IOrderMatcher
-    function placeMarketOrder(OrderType orderType, address token0, address token1, uint256 amount) external {
-        bool zeroForOne = (orderType == IOrderMatcher.OrderType.SELL) ? true : false;
+    function placeMarketOrder(uint256 orderType, address token0, address token1, uint256 amount) external {
+        bool zeroForOne = (orderType == 1) ? true : false;
 
         swapRouter.swap(
             PoolKey({

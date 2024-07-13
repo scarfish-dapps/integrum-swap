@@ -63,7 +63,7 @@ contract CounterTest is Test, Deployers {
     function testEntryPointHooks() public {
         bool zeroForOne = true;
         uint256 amount = 1e18; // negative number indicates exact input swap!
-        mainContract.placeMarketOrder(IOrderMatcher.OrderType.BUY, Currency.unwrap(currency0), Currency.unwrap(currency1), amount);
-        mainContract.placeMarketOrder(IOrderMatcher.OrderType.SELL, Currency.unwrap(currency0), Currency.unwrap(currency1), amount);
+        mainContract.placeMarketOrder(0, Currency.unwrap(currency0), Currency.unwrap(currency1), amount);
+        mainContract.placeMarketOrder(1, Currency.unwrap(currency0), Currency.unwrap(currency1), amount);
     }
 }
