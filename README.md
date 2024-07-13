@@ -4,6 +4,8 @@ This is our EthGlobal Brussels hackathon project.
 
 **IntegrumSwap** is a decentralised **cross chain exchange** that inherits the best of two worlds: AMMs like Uniswap and Coincidence of Wants dexes like CoWSwap.
 
+![Comparison](Comparison.png)
+
 Uniswap runs on-chain and thus is decentralised, but we all know about the MEV and front-running issues. That happens mainly because AMMs do not work with fixed pricing of swaps and so someone can change the price of a token just before your order executes.
 IntegrumSwap does not suffer from these issues because like CoW Swap, it uses coincidence of wants to fulfill trade orders.
 CoW Swap uses off-chain order matching and thus is not decentralised and is vulnerable. IntegrumSwap runs the order matching engine on-chain using Arbitrum WASM VM. That is an order of magnitude faster than EVM with significantly lower gas fees. That is due to the superior efficiency of WASM programs. Also memory can be 100-500 times cheaper.
@@ -15,6 +17,10 @@ For example a user holding tokens on Optimism can trade with a user that holds t
 Integrum also implements Uniswap V4 and Pancake swap V4 hooks. If the users get better prices in local liquidity pool, the default swap logic is executed locally. Otherwise, if the user can get a better market order price on a remote chain, they go through LayerZero and the tokens are bridged accordingly across chains. 
 
 We have deployed Integrum contracts on Ethereum Sepolia, Celo Alfajores, Base Sepolia, Scroll Sepolia and Optimism Sepolia. The order matching engine is deployed on Arbitrum Sepolia.
+
+### Architecture
+
+![Architecture](Architecture.png)
 
 ### How to run
 
