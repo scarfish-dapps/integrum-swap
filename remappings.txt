@@ -4,5 +4,6 @@
 @layerzerolabs/lz-evm-protocol-v2/=lib/LayerZero-v2/packages/layerzero-v2/evm/protocol/
 @layerzerolabs/lz-evm-messagelib-v2/=lib/LayerZero-v2/messagelib/
 @layerzerolabs/lz-evm-v1-0.7/=lib/LayerZero/
-solidity-bytes-utils/=lib/solidity-bytes-utils/
 @zodomo/oapp-upgradeable/=lib/oapp-upgradeable/
+solidity-bytes-utils/=node_modules/solidity-bytes-utils/
+

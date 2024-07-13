@@ -1,15 +1,20 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.25;
 
-import "./IOrderMatcher.sol";
+import {IOrderMatcherWrapper} from "./IOrderMatcherWrapper.sol";
+import {OApp, Origin, MessagingFee } from "lib/LayerZero-v2/packages/layerzero-v2/evm/oapp/contracts/oapp/OApp.sol";
+import { Ownable } from "lib/openzeppelin-contracts/contracts/access/Ownable.sol";
 
-
-contract OrderMatcherWrapper is IOrderMatcher {
+contract OrderMatcherWrapper is OApp, IOrderMatcherWrapper {
     address public rustContractAddress;
 
     address public deployer;
 
-    constructor(address _rustContractAddress) {
+    bool public inWrapper = false; 
+    bool public setTrue = false;
+    uint32 public callSenderEid = 1;
+
+    constructor(address _endpoint, address _owner, address _rustContractAddress) OApp(_endpoint, _owner) Ownable(_owner)  {
         rustContractAddress = _rustContractAddress;
         deployer = msg.sender;
     }
@@ -24,39 +29,93 @@ contract OrderMatcherWrapper is IOrderMatcher {
         address token0,
         address token1,
         uint256 amount,
-        uint256 price
-    ) external override returns (OrderResponse memory) {
+        uint256 price,
+        address user,
+        uint32 userEid
+    ) public payable  {
+            setTrue = true;
 
         (bool success, bytes memory data) = rustContractAddress.call(
             abi.encodeWithSignature(
-                "placeLimitOrder(uint256,address,address,uint256,uint256)",
+                "placeLimitOrder(address,uint256,uint256,address,address,uint256,uint256)",
+                user,
+                uint256(userEid),
                 orderType,
                 token0,
                 token1,
                 amount,
                 price
             )
-        );
-
+        );  
         require(success, "Failed to place limit order");
 
-        (uint256 orderId, address user, address otherUser, int256 amountToken0DeltaUser, int256 amountToken1DeltaUser, int256 amountToken0DeltaOtherUser, int256 amountToken1DeltaOtherUser) = 
-        abi.decode(data, (uint256, address, address, int256, int256, int256, int256));
 
-        // emit OrderPlaced(orderId, msg.sender, orderType, token0, token1, amount, price);
+        // Decode the returned data 
+    (
+        uint256 orderId,
+        address user,
+        uint256 otherUserEid,
+        address otherUser,
+        int256 amountToken0DeltaUser,
+        int256 amountToken1DeltaUser,
+        int256 amountToken0DeltaOtherUser,
+        int256 amountToken1DeltaOtherUser,
+        address otherToken0,
+        address otherToken1
+    ) = abi.decode(data, (uint256, address, uint256, address, int256, int256, int256, int256, address, address));
+        uint32 otherUserEidB32 = uint32(otherUserEid);
 
-        return OrderResponse({
-            orderId: orderId,
-            user: user,
-            other_users: otherUser,
-            amount_token0_delta_user: amountToken0DeltaUser,
-            amount_token1_delta_user: amountToken1DeltaUser,
-            amount_token0_delta_other_users: amountToken0DeltaOtherUser,
-            amount_token1_delta_other_users: amountToken1DeltaOtherUser
-        });
+
+
+        // to do
+        // send a message back to the main contract
+    
+        // if(otherUser != address(0)){
+        //     if(orderType == 0){   // if buy
+        //     //_lzSend user
+        //     // step 1 first for USER
+        //     // tokens1  (burn)
+        //     // tokens0  (mint)
+        //     // send for user 
+        //     // bytes memory _payloadUser = abi.encode(token0, token1, amountToken0DeltaUser, amountToken1DeltaUser);
+        //     // _lzSend(
+        //     //     userEid,
+        //     //     _payloadUser,
+        //     //     "", // Options can be empty or configured as needed
+        //     //     MessagingFee(msg.value, 0),
+        //     //     payable(user)
+        //     // );
+        //     // //_lzSend otherUser
+        //     // // step 2   otherUser
+        //     // // tokens0   (burn)
+        //     // // tokens1  (mint)
+        //     // // send for otherUser 
+        //     // bytes memory _payloadOtherUser = abi.encode(otherToken0, otherToken1, amountToken0DeltaOtherUser, amountToken1DeltaOtherUser);
+        //     // _lzSend(
+        //     //     otherUserEidB32,
+        //     //     _payloadOtherUser,
+        //     //     "", // Options can be empty or configured as needed
+        //     //     MessagingFee(msg.value, 0),
+        //     //     payable(user)
+        //     // );
+                
+        //     } 
+        //     else {  // if sell  
+
+        //         //_lzSend user
+        //         // tokens0  (burn)
+        //         // tokens1  (mint)
+
+        //         //_lzSend otherUser                
+        //         // tokens1 (burn)
+        //         // tokens0  (mint)
+
+        //     }
+        // }
+
     }
 
-    function retrieveLimitOrder(uint256 index) external view override returns (Order memory) {
+    function retrieveLimitOrder(uint256 index) public view returns (Order memory) {
         (bool success, bytes memory data) = rustContractAddress.staticcall(
             abi.encodeWithSignature("retrieveLimitOrder(uint256)", index)
         );
@@ -80,7 +139,7 @@ contract OrderMatcherWrapper is IOrderMatcher {
         return order;
     }
 
-    function cancelLimitOrder(uint256 orderId) external override {
+    function cancelLimitOrder(uint256 orderId) public {
         (bool success,) = rustContractAddress.call(
             abi.encodeWithSignature("cancelLimitOrder(uint256)", orderId)
         );
@@ -90,7 +149,7 @@ contract OrderMatcherWrapper is IOrderMatcher {
         emit OrderCanceled(orderId, msg.sender);
     }
 
-    function cancelAllLimitOrders() external override {
+    function cancelAllLimitOrders() public {
         (bool success,) = rustContractAddress.call(
             abi.encodeWithSignature("cancelAllLimitOrders()")
         );
@@ -105,7 +164,7 @@ contract OrderMatcherWrapper is IOrderMatcher {
         address token0,
         address token1,
         uint256 amount
-    ) external override {
+    ) public  {
         (bool success, bytes memory data) = rustContractAddress.call(
             abi.encodeWithSignature(
                 "placeMarketOrder(uint256,address,address,uint256)",
@@ -123,5 +182,56 @@ contract OrderMatcherWrapper is IOrderMatcher {
 
         // Assuming a matching event should be emitted, however, this may require additional logic to capture matched orders
         // emit OrderMatched(buyOrderId, sellOrderId, buyer, seller, amount, price);
+    }
+
+
+ function _lzReceive(
+        Origin calldata _origin,
+        bytes32 _guid,
+        bytes calldata payload,
+        address,  // Executor address as specified by the OApp.
+        bytes calldata  // Any extra data or options to trigger on receipt.
+    ) internal override {
+        // Decode the payload
+        // adaugat campuri pentru restul (limitOrderID etc)
+        (
+            address sender,
+            uint256 orderType,
+            string memory orderFunctionType,
+            address token0,
+            address token1,
+            uint256 amount,
+            uint256 price
+        ) = abi.decode(payload, (address, uint256, string, address, address, uint256, uint256));
+        // Extract the sender's EID from the origin
+        // we need the id on the orderMatcherWrapper so we know where the message is from
+        uint32 senderEid = _origin.srcEid;
+        bytes32 call_sender = _origin.sender;
+        inWrapper = true;
+        callSenderEid = senderEid;
+
+        if(keccak256(abi.encodePacked(orderFunctionType)) == keccak256(abi.encodePacked("LIMIT_ORDER"))){
+            this.placeLimitOrder(orderType,token0,token1,amount,price,sender, senderEid);
+
+        }else if(keccak256(abi.encodePacked(orderFunctionType))  == keccak256(abi.encodePacked("CANCEL_ORDER"))){
+                // cancellALl
+        }else if(keccak256(abi.encodePacked(orderFunctionType)) ==  keccak256(abi.encodePacked("CANCEL_ALL_ORDER"))){
+            
+        }else if(keccak256(abi.encodePacked(orderFunctionType)) ==  keccak256(abi.encodePacked("MARKET_ORDER"))){
+
+        }else{
+            revert("wrong order");
+        }
+
+
+        // Extract the sender's EID from the origin
+        // uint32 senderEid = _origin.srcEid;
+        // bytes32 sender = _origin.sender;
+        // Emit the event with the decoded message and sender's EID
+        // emit MessageReceived(data, senderEid, sender);
+    }
+
+    function getChainID() external view returns (uint256) {
+        return block.chainid;
     }
 }

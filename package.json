@@ -1,0 +1,28 @@
+{
+  "name": "integrum-swap",
+  "version": "1.0.0",
+  "description": "This is our EthGlobal Brussels hackathon project.",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scarfish-dapps/integrum-swap.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/scarfish-dapps/integrum-swap/issues"
+  },
+  "homepage": "https://github.com/scarfish-dapps/integrum-swap#readme",
+  "dependencies": {
+    "@layerzerolabs/lz-evm-oapp-v2": "^2.3.29",
+    "@layerzerolabs/lz-evm-protocol-v2": "^2.3.29",
+    "solidity-bytes-utils": "^0.8.2"
+  }
+}
