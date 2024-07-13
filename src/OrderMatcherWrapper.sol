@@ -235,7 +235,7 @@ contract OrderMatcherWrapper is OApp, IOrderMatcherWrapper {
         return block.chainid;
     }
     
-    function getOrdersLength() external view override returns (uint256) {
+    function getOrdersLength() external view returns (uint256) {
         (bool success, bytes memory data) = rustContractAddress.staticcall(
             abi.encodeWithSignature("getOrdersLength()")
         );
