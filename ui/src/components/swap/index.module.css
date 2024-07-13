@@ -1,0 +1,31 @@
+.pAbsolute {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -80%);
+    background: #dedfdf;
+    padding-left: 5px;
+    padding-right: 5px;
+    border: 2px solid #ffffff;
+    border-radius:10px;
+}
+
+.noArrows::-webkit-outer-spin-button,
+.noArrows::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.noArrows {
+    -moz-appearance: textfield;
+}
+
+.sellButton {
+    background-color: #FE208B;
+    color: #ffffff;
+}
+
+.sellButton:hover {
+    background-color: #FE208B;
+    color: black;
+}
