@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import styles from "./index.module.css";
 import { useWeb3ModalProvider } from "@web3modal/ethers/react";
-import { getTokenByAddress, trimAddress } from "../../utils";
+import { getTokenByAddress, OrderType, trimAddress } from "../../utils";
 import { GET_CONTRACT } from "../../ContractUtils";
-import { setLoading } from "../../store/spiner/spinerSlice";
-import { useAppDispatch } from "../../store/hooks";
+import { setLoading, setTransactionHash } from "../../store/spiner/spinerSlice";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import ModalComponent from "../modal/Modal";
+import { formatEther } from "ethers";
 
 interface OrderResponse {
 	id: string;
@@ -21,6 +22,7 @@ interface OrderResponse {
 
 const OrdersHistory: React.FC = () => {
 	const dispatch = useAppDispatch();
+	const transactionHash = useAppSelector((state) => state.spinner.transactionHash);
 	const { walletProvider } = useWeb3ModalProvider();
 	const [isLoading, setIsLoading] = useState(false);
 	const [orders, setOrders] = useState<OrderResponse[]>([]);
@@ -38,7 +40,7 @@ const OrdersHistory: React.FC = () => {
 				}
 			});
 		}
-	}, [walletProvider]);
+	}, [walletProvider, transactionHash]);
 	
 	const getOrdersLength = async (): Promise<number> => {
 		const contract = await GET_CONTRACT(walletProvider);
@@ -90,7 +92,8 @@ const OrdersHistory: React.FC = () => {
 			console.log('Transaction sent:', tx);
 			const receipt = await tx.wait();
 			dispatch(setLoading(false));
-			setTxHash(receipt.transactionHash);
+			setTxHash(receipt.hash);
+			dispatch(setTransactionHash(receipt.hash));
 			setMessage('Order Cancelled');
 			setShowModal(true);
 			console.log('Transaction confirmed:', receipt);
@@ -112,6 +115,7 @@ const OrdersHistory: React.FC = () => {
 		<thead>
 		<tr className="fw-bold">
 			<th>Order Id</th>
+			<th>Type</th>
 			<th>Swap <i className="ms-2 bi bi-arrow-left-right"></i></th>
 			<th>User</th>
 			<th>Status</th>
@@ -120,13 +124,30 @@ const OrdersHistory: React.FC = () => {
 		</thead>
 	);
 	
-	const row = ({ id, amount, token0, token1, isFilled, user, price }: OrderResponse) => (
+	const row = ({ id, amount, token0, token1, isFilled, user, price, orderType }: OrderResponse) => (
 		<tr key={id} className="bg-danger">
 			<td>{id}</td>
+			<td>{Number(orderType) === OrderType.BUY ? <span className="c-aqua">Buy</span> :
+				<span className="c-main">Sell</span>}</td>
 			<td>
-				<span>{getTokenByAddress(token0)?.symbol} {amount}</span>
-				<i className="bi-arrow-right-short"></i>
-				<span> {Number(amount) * Number(price)} {getTokenByAddress(token1)?.symbol}</span>
+				{
+					Number(orderType) === OrderType.BUY
+						? (
+							<>
+								<span> {(Number(formatEther(amount)) * Number(formatEther(price))).toFixed(1)} {getTokenByAddress(token1)?.symbol}</span>
+								<span className="ms-2 me-2 rounded-1  ps-3 pe-3 text-black bg-aqua">for</span>
+								<span>{getTokenByAddress(token0)?.symbol} {formatEther(amount)}</span>
+							</>
+						)
+						: (
+							<>
+								<span>{getTokenByAddress(token0)?.symbol} {formatEther(amount)}</span>
+								<span className="ms-2 me-2 rounded-1  ps-3 pe-3 text-white bg-main">for</span>
+								<span> {(Number(formatEther(amount)) * Number(formatEther(price))).toFixed(1)} {getTokenByAddress(token1)?.symbol}</span>
+							</>
+						)
+				}
+			
 			</td>
 			<td>{trimAddress(user)}</td>
 			<td className={`${isFilled ? 'text-danger' : 'text-success'} fw-bold`}>{isFilled ? 'FILLED' : 'OPEN'}</td>
@@ -153,7 +174,7 @@ const OrdersHistory: React.FC = () => {
 						className={`table table-striped table-hover bg-transparent text-white ${styles.roundedTable}`}>
 						{header()}
 						<tbody>
-						{orders.map(row)}
+						{orders.filter(order => !order.isCanceled).map(row)}
 						</tbody>
 					</table>
 				) : (
