@@ -51,5 +51,5 @@ interface IOrderMatcher {
 
     function placeMarketOrder(uint256 orderType, address token0, address token1, uint256 amount) external;
 
-    function getOrdersLength() external view override returns (uint256);
+    function getOrdersLength() external view returns (uint256);
 }
