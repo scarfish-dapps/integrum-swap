@@ -192,4 +192,8 @@ impl OrderMatcher {
 
         (user, other_eid, other_user, amount_token0_delta_user, amount_token1_delta_user, amount_token0_delta_other_user, amount_token1_delta_other_user, other_token0, other_token1)
     }
+
+    pub fn get_orders_length(&self) -> U256 {
+        self.orders_length.get()
+    }
 }
