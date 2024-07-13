@@ -5,10 +5,10 @@ import DropdownWithSearch from "../DropdownWithSearch.tsx/DropdownWithSearch";
 import { Token } from "../../client/tokens";
 import { CONFIRMED, ERC20_TOKENS, OrderType } from "../../utils";
 import SwapTabs from "../swapTabs/SwapTabs";
-import { parseUnits } from "ethers";
+import { parseUnits, parseEther } from "ethers";
 import { useWeb3ModalProvider } from "@web3modal/ethers/react";
 import ModalComponent from "../modal/Modal";
-import { setLoading } from "../../store/spiner/spinerSlice";
+import { setLoading, setTransactionHash } from "../../store/spiner/spinerSlice";
 import { GET_CONTRACT } from "../../ContractUtils";
 
 const LimitSwap: React.FC = () => {
@@ -21,7 +21,7 @@ const LimitSwap: React.FC = () => {
 	const [txHash, setTxhash] = useState('');
 	const [message, setMessage] = useState('');
 	
-	const [value1, setValue1] = useState<number>(0.0);
+	const [value1, setValue1] = useState<string>('0');
 	const [selectedToken1, setSelectedToken1] = useState<Token>(ERC20_TOKENS[0]);
 	
 	const [value2, setValue2] = useState<number>(0.0);
@@ -31,7 +31,7 @@ const LimitSwap: React.FC = () => {
 	const handleClose = () => setShowModal(false);
 	
 	const handleValue1Change = (e: ChangeEvent<HTMLInputElement>) => {
-		setValue1(parseFloat(e.target.value));
+		setValue1(e.target.value);
 	};
 	
 	const handleValue2Change = (e: ChangeEvent<HTMLInputElement>) => {
@@ -42,7 +42,7 @@ const LimitSwap: React.FC = () => {
 		setLimitValue(parseFloat(e.target.value));
 	};
 	
-	const limitOrder = async () => {
+	const limitOrder = async (orderType: OrderType) => {
 		if (!walletProvider) {
 			alert('Please connect your wallet');
 			return;
@@ -55,7 +55,7 @@ const LimitSwap: React.FC = () => {
 			dispatch(setLoading(true));
 			// Use the correct integer value for OrderType.SELL
 			const tx = await contract.placeLimitOrder(
-				OrderType.SELL,
+				orderType,
 				selectedToken1.address,
 				selectedToken2.address,
 				parseUnits(value1.toString(), 18),
@@ -65,6 +65,7 @@ const LimitSwap: React.FC = () => {
 			const receipt = await tx.wait();
 			dispatch(setLoading(false));
 			setTxhash(receipt.hash);
+			dispatch(setTransactionHash(receipt.hash));
 			setMessage(CONFIRMED);
 			setShowModal(true);
 			
@@ -75,7 +76,7 @@ const LimitSwap: React.FC = () => {
 		}
 	};
 	
-	const limitPriceReceive = value1 * limitValue ? value1 * limitValue : 0;
+	const limitPriceReceive = Number(value1) * limitValue ? Number(value1) * limitValue : 0;
 	
 	return (
 		<div className="card rounded-5" style={{ width: '52rem' }}>
@@ -131,11 +132,20 @@ const LimitSwap: React.FC = () => {
 						className="mt-2 d-flex fw-light fs-13">Balance: {balance.toFixed(1)} {selectedToken2.symbol}</div>
 				</div>
 				
-				<div className={`${S.sellButton} rounded-4 p-3 mt-3 c-pointer`}
-					 onClick={limitOrder}
-				>
-					Sell ${selectedToken1.symbol}
+				<div className="d-flex w-100 justify-content-between">
+					<div className={`${S.buyButton} w-100 rounded-4 p-3 mt-3 c-pointer me-2`}
+						 onClick={() => limitOrder(OrderType.BUY)}
+					>
+						Buy ${selectedToken2.symbol}
+					</div>
+					
+					<div className={`${S.sellButton} w-100 rounded-4 p-3 mt-3 c-pointer`}
+						 onClick={() => limitOrder(OrderType.SELL)}
+					>
+						Sell ${selectedToken1.symbol}
+					</div>
 				</div>
+			
 			</div>
 			<ModalComponent show={showModal} handleClose={handleClose} txHash={txHash}
 							title={message} />

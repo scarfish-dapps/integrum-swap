@@ -27,6 +27,17 @@
 
 }
 
+.buyButton:hover {
+    background-color: #65d9ff;
+    color: black;
+}
+
+.buyButton {
+    background-color: #65d9ff;
+    color: #ffffff;
+
+}
+
 .sellButton:hover {
     background-color: #FE208B;
     color: black;
