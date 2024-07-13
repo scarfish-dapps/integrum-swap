@@ -11,3 +11,12 @@ solmate/=lib/v4-periphery/lib/solmate/src/
 v4-core/=lib/v4-core/
 v4-periphery/=lib/v4-periphery/contracts/
 lib/v4-periphery:@uniswap/v4-core/=lib/v4-core/
+
+@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/
+@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/
+@layerzerolabs/lz-evm-oapp-v2/=lib/LayerZero-v2/packages/layerzero-v2/evm/oapp/
+@layerzerolabs/lz-evm-protocol-v2/=lib/LayerZero-v2/packages/layerzero-v2/evm/protocol/
+@layerzerolabs/lz-evm-messagelib-v2/=lib/LayerZero-v2/messagelib/
+@layerzerolabs/lz-evm-v1-0.7/=lib/LayerZero/
+solidity-bytes-utils/=lib/solidity-bytes-utils/
+@zodomo/oapp-upgradeable/=lib/oapp-upgradeable/
