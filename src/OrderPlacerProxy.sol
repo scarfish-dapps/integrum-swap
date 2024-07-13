@@ -28,4 +28,8 @@ contract OrderPlacerProxy is IOrderMatcher {
     /// @inheritdoc IOrderMatcher
     function placeMarketOrder(uint256 orderType, address token0, address token1, uint256 amount) external override {
     }
+
+    function getOrdersLength() external view override returns (uint256) {
+        return 0;
+    }
 }

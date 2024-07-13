@@ -2,10 +2,12 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface SpinnerState {
 	isLoading: boolean;
+	transactionHash: string;
 }
 
 const initialState: SpinnerState = {
-	isLoading: false
+	isLoading: false,
+	transactionHash: '',
 };
 
 export const spinnerSlice = createSlice({
@@ -15,9 +17,12 @@ export const spinnerSlice = createSlice({
 		setLoading: (state, action: PayloadAction<boolean>) => {
 			state.isLoading = action.payload;
 		},
+		setTransactionHash: (state, action: PayloadAction<string>) => {
+			state.transactionHash = action.payload;
+		},
 	},
 });
 
-export const { setLoading } = spinnerSlice.actions;
+export const { setLoading, setTransactionHash } = spinnerSlice.actions;
 
 export default spinnerSlice.reducer;

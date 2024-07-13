@@ -136,4 +136,14 @@ contract MainContract is IOrderMatcher {
         // Assuming a matching event should be emitted, however, this may require additional logic to capture matched orders
         // emit OrderMatched(buyOrderId, sellOrderId, buyer, seller, amount, price);
     }
+
+    function getOrdersLength() external view override returns (uint256) {
+        (bool success, bytes memory data) = rustContractAddress.staticcall(
+            abi.encodeWithSignature("getOrdersLength()")
+        );
+
+        require(success, "Failed to get orders length");
+
+        return abi.decode(data, (uint256));
+    }
 }
