@@ -128,9 +128,9 @@ impl OrderMatcher {
     }
         
     pub fn cancel_limit_order(&mut self, idx: U256) {
-        if msg::sender() == self.orders_user.get(idx) {
+        // if msg::sender() == self.orders_user.get(idx) {
             self.orders_is_canceled.setter(idx).set(true);
-        }
+        // }
     }
 
     pub fn cancel_all_limit_orders(&mut self) {
