@@ -79,6 +79,9 @@ Deployed OFTs:
 
 For market orders, IntegrumSwap implements a Uniswap hook. If the hook sees that there are better prices on other chains, instead of doing the swap with the local liquidity pool, it bypasses the default logic and sends a market order through LayerZero to the matching engine on Arbitrum Stylus. 
 
+Hook deployment address: 0xbe45E53EFd261abA6E9fBf4bf2ddd8618B628088
+
+Hook source code: https://github.com/scarfish-dapps/integrum-swap/blob/main/src/EntryPoint.sol
 
 ### WalletConnect
 
