@@ -4,3 +4,10 @@ out = "out"
 libs = ["lib"]
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
+
+[rpc_endpoints]
+sepolia = "${SEPOLIA_RPC_URL}"
+celo = "${ALFAJORES_RPC_URL}"
+base = "${BASE_RPC_URL}"
+scroll = "${SCROLL_RPC_URL}"
+op = "${OPTIMISM_RPC_URL}"
