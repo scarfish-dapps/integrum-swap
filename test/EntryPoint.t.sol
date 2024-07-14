@@ -27,6 +27,10 @@ contract CounterTest is Test, Deployers {
     EntryPoint hook;
     PoolId poolId;
     MainContract mainContract;
+    OrderPlacerMock orderPlacerMock;
+
+    address layerZeroActor = makeAddr("layerZero");
+    address tokenReceiver = makeAddr("tokenReceiver");
 
     function setUp() public {
         // creates the pool manager, utility routers, and test tokens
@@ -40,8 +44,8 @@ contract CounterTest is Test, Deployers {
             ) ^ (0x4444 << 144) // Namespace the hook to avoid collisions
         );
 
-        OrderPlacerMock orderPlacerMock = new OrderPlacerMock();
-        deployCodeTo("EntryPoint.sol:EntryPoint", abi.encode(manager, orderPlacerMock), flags);
+        orderPlacerMock = new OrderPlacerMock();
+        deployCodeTo("EntryPoint.sol:EntryPoint", abi.encode(manager, orderPlacerMock, swapRouter), flags);
         hook = EntryPoint(flags);
         orderPlacerMock.setHook(hook);
 
@@ -60,10 +64,25 @@ contract CounterTest is Test, Deployers {
         mainContract = new MainContract(swapRouter, address(hook));
     }
 
-    function testEntryPointHooks() public {
-        bool zeroForOne = true;
+    function testFulfillOrder() public {
         uint256 amount = 1e18; // negative number indicates exact input swap!
         mainContract.placeMarketOrder(0, Currency.unwrap(currency0), Currency.unwrap(currency1), amount);
         mainContract.placeMarketOrder(1, Currency.unwrap(currency0), Currency.unwrap(currency1), amount);
+
+        vm.prank(layerZeroActor);
+
+        orderPlacerMock.fulfillCallback(address(this), 0, tokenReceiver);
+        orderPlacerMock.fulfillCallback(address(this), 1, tokenReceiver);
+    }
+
+    function testExecuteInternalOrder() public {
+        uint256 amount = 1e18; // negative number indicates exact input swap!
+        mainContract.placeMarketOrder(0, Currency.unwrap(currency0), Currency.unwrap(currency1), amount);
+        mainContract.placeMarketOrder(1, Currency.unwrap(currency0), Currency.unwrap(currency1), amount);
+
+        vm.prank(layerZeroActor);
+
+        orderPlacerMock.executeInternalOrder(address(this), 0);
+        orderPlacerMock.executeInternalOrder(address(this), 1);
     }
 }

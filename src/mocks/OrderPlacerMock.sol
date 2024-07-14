@@ -26,13 +26,21 @@ contract OrderPlacerMock is IOrderMatcher {
     }
 
     function placeMarketOrder(uint256 orderType, address token0, address token1, uint256 amount) external{
-        address tokenToSend;
-        if(orderType == 1) {
-            tokenToSend = token0;
-        } else {
-            tokenToSend = token1;
-        }
-        hook.sendTokens(amount, tokenToSend, address(0));
+        
+    }
+
+    function executeInternalOrder(address sender, uint256 nonce) external {
+         hook.executeInternalOrder(sender, nonce);
+    }
+
+    function fulfillCallback(address sender, uint256 nonce, address dest) external {
+        // address tokenToSend;
+        // if(orderType == 1) {
+        //     tokenToSend = token0;
+        // } else {
+        //     tokenToSend = token1;
+        // }
+        hook.sendTokens(sender, nonce, dest);
     }
 
     function setHook(EntryPoint _hook) external {
