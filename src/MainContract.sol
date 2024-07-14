@@ -2,17 +2,30 @@
 pragma solidity ^0.8.25;
 
 import {IOrderMatcher} from "./IOrderMatcher.sol";
+import {PoolSwapTest} from "v4-core/src/test/PoolSwapTest.sol";
+import {PoolKey} from "v4-core/src/types/PoolKey.sol";
+import {IPoolManager} from "v4-core/src/interfaces/IPoolManager.sol";
+import {TickMath} from "v4-core/src/libraries/TickMath.sol";
+import {Currency} from "v4-core/src/types/Currency.sol";
+import {IHooks} from "v4-core/src/interfaces/IHooks.sol";
 
 /// Routes limit orders to the OrderPlacerProxy and market orders to the UniswapV4Router
 contract MainContract is IOrderMatcher {
+    uint160 public constant MIN_PRICE_LIMIT = TickMath.MIN_SQRT_PRICE + 1;
+    uint160 public constant MAX_PRICE_LIMIT = TickMath.MAX_SQRT_PRICE - 1;
+
+    PoolSwapTest public swapRouter;
+    address entryPointHook;
 
     address public rustContractAddress;
 
     address public deployer;
 
-    constructor(address _rustContractAddress) {
+    constructor(address _rustContractAddress, PoolSwapTest _swapRouter, address hook) {
         rustContractAddress = _rustContractAddress;
         deployer = msg.sender;
+        swapRouter = _swapRouter;
+        entryPointHook = hook;
     }
 
     function setRustContractAddress(address _rustContractAddress) external {
@@ -111,29 +124,42 @@ contract MainContract is IOrderMatcher {
 
     /// @inheritdoc IOrderMatcher
     function placeMarketOrder(uint256 orderType, address token0, address token1, uint256 amount) external override {
-        address sender = msg.sender;
-        uint256 eid = 0;
+        bool zeroForOne = (orderType == 1) ? true : false;
 
-        (bool success, bytes memory data) = rustContractAddress.call(
-            abi.encodeWithSignature(
-                //user: Address, _eid: U256, order_type: U256, token0: Address, token1: Address, mut amount: U256
-                "placeMarketOrder(address,uint256,uint256,address,address,uint256)",
-                sender,
-                eid,
-                uint256(orderType),
+        swapRouter.swap(
+            PoolKey({
+                currency0: Currency.wrap(token0),
+                currency1: Currency.wrap(token1),
+                fee: 3000,
+                tickSpacing: 60,
+                hooks: IHooks(entryPointHook)
+            }),
+            IPoolManager.SwapParams({
+                zeroForOne: zeroForOne,
+                amountSpecified: -int256(amount),
+                sqrtPriceLimitX96: zeroForOne ? MIN_PRICE_LIMIT : MAX_PRICE_LIMIT
+            }),
+            PoolSwapTest.TestSettings({takeClaims: false, settleUsingBurn: false}),
+            abi.encode(
+                msg.sender,
+                orderType,
                 token0,
                 token1,
                 amount
             )
         );
 
-        require(success, "Failed to place market order");
-
-        //(      user,         other_eid, other_user, amount_token0_delta_user, amount_token1_delta_user, amount_token0_delta_other_user, amount_token1_delta_other_user, other_token0, other_token1)
-        (address user, uint256 other_eid, address otherUsers, int256 amountToken0DeltaUser, int256 amountToken1DeltaUser, int256 amountToken0DeltaOtherUsers, int256 amountToken1DeltaOtherUsers, address otherToken0, address otherToken1) = 
-        abi.decode(data, (address, uint256, address, int256, int256, int256, int256, address, address));
-
         // Assuming a matching event should be emitted, however, this may require additional logic to capture matched orders
         // emit OrderMatched(buyOrderId, sellOrderId, buyer, seller, amount, price);
+    }
+
+    function getOrdersLength() external view override returns (uint256) {
+        (bool success, bytes memory data) = rustContractAddress.staticcall(
+            abi.encodeWithSignature("getOrdersLength()")
+        );
+
+        require(success, "Failed to get orders length");
+
+        return abi.decode(data, (uint256));
     }
 }

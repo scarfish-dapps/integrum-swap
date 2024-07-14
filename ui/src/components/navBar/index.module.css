@@ -1,0 +1,15 @@
+.navBar {
+    background: #a2e6fb;
+    position: fixed;
+    top: 10px;
+    width: 95%;
+}
+
+.button{
+    width: 100px;
+    cursor: pointer;
+}
+.button:hover {
+    background: #fff;
+
+}
