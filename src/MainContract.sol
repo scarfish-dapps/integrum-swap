@@ -39,9 +39,9 @@ contract MainContract is IOrderMatcher, OApp {
         orderPlacerProxy= OrderPlacerProxy(_orderPlacerProxy);
     }
 
-    function setBlockchain(uint32 eid, address blockchain) {
+    function setBlockchain(uint32 _eid, address blockchain) public {
         require(msg.sender == deployer, "na na na");
-        connections[eid] = blockchain;
+        connections[_eid] = blockchain;
     }
 
     /// @inheritdoc IOrderMatcher
@@ -53,7 +53,20 @@ contract MainContract is IOrderMatcher, OApp {
 
         orderPlacerProxy.placeLimitOrder{value: msg.value}(orderType, token0, token1, amount, price, sender, _orders);
         
-        //TODO implement sendMsg
+        //////////////////////////////////////////////////////////////////
+        token0.approve(address(this), value);
+
+        bytes memory _payload = abi.encode(orderType, token0, token1, amount, price);
+            _lzSend(
+                eidArbitrumSepolia,
+                _payload,
+                _options,
+                // Fee in native gas and ZRO token.
+                MessagingFee(msg.value, 0),
+                // Refund address in case of failed source message.
+                payable(sender) 
+            );
+        //////////////////////////////////////////////////////////////////
 
         // OFTContract(token0).approve(address(this), amount);
         // OFTContract(token0).send();
@@ -96,6 +109,32 @@ contract MainContract is IOrderMatcher, OApp {
             release(token1, amount);
         }
     }
+
+    function _lzReceive(
+        Origin calldata _origin,
+        bytes32 _guid,
+        bytes calldata payload,
+        address,  // Executor address as specified by the OApp.
+        bytes calldata  // Any extra data or options to trigger on receipt.
+    ) internal override {
+        // Decode the payload to get the message
+        // data = abi.decode(payload, (string));
+        // Extract the sender's EID from the origin
+        uint32 senderEid = _origin.srcEid;
+        bytes32 sender = _origin.sender;
+        (   uint256 orderType,
+            address token0,
+            address token1,
+            int256 amountToken0DeltaUser,
+            int256 amountToken1DeltaUser
+        ) = abi.decode(payload, (uint256, address, address, int256, int256));
+        
+
+        // Emit the event with the decoded message and sender's EID
+        // emit MessageReceived(data, senderEid, sender);
+    }
+
+    /////Providing liquidity/////
 
     function stake(OFTContract token, uint256 value) public {
         OFTContract.approve(address(this), value);
