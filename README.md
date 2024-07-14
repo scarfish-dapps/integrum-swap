@@ -60,8 +60,12 @@ The OrderMatching contract is implemented in Rust [here](order-matcher/src/lib.r
 
 ### LayerZero
 
-To communitcate between chains, IntegrumSwap uses LayerZero. For the hackathon we have deployed end-points to Ethereum, Optimism, Scroll, Base and Celo. They are all Solidity contracts that send limit or market orders using LayerZero to the matching engine that lives on Arbitrum Stylus.
+To communitcate between chains, IntegrumSwap uses LayerZero. For the hackathon we have deployed end-points to Ethereum, Optimism, Scroll, Base, Celo and Linea. They are all Solidity contracts that send limit or market orders using LayerZero to the matching engine that lives on Arbitrum Stylus.
 After the orders are matched, each individual endpoint uses OFT to settle the tokens.
+
+See the code:
+[https://github.com/scarfish-dapps/integrum-swap/blob/IntegerSwapV2/src/OrderPlacerProxy.sol](https://github.com/scarfish-dapps/integrum-swap/blob/IntegerSwapV2/src/OrderPlacerProxy.sol)
+[https://github.com/scarfish-dapps/integrum-swap/blob/IntegerSwapV2/src/OrderMatcherWrapper.sol](https://github.com/scarfish-dapps/integrum-swap/blob/IntegerSwapV2/src/OrderMatcherWrapper.sol)
 
 Deployed OFTs:
 
@@ -74,6 +78,12 @@ Deployed OFTs:
 ### Uniswap V4
 
 For market orders, IntegrumSwap implements a Uniswap hook. If the hook sees that there are better prices on other chains, instead of doing the swap with the local liquidity pool, it bypasses the default logic and sends a market order through LayerZero to the matching engine on Arbitrum Stylus. 
+
+
+### WalletConnect
+
+WalletConnect is utilized to access the wallet provider connected through Web3Modal. This integration allows the app to interact with the blockchain and facilitates seamless network switching. Additionally, the app customizes the wallet information display, providing users with an enhanced experience.
+Source file is [here](https://github.com/scarfish-dapps/integrum-swap/blob/main/ui/src/components/walletProfile/WalletProfile.tsx)
 
 ### Base
 
