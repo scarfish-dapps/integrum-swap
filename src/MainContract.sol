@@ -7,6 +7,7 @@ import {OApp, Origin, MessagingFee } from "lib/LayerZero-v2/packages/layerzero-v
 import { OFT } from "@layerzerolabs/lz-evm-oapp-v2/contracts/oft/OFT.sol";
 import { OFTContract } from "./OFTContract.sol";
 
+import { Ownable } from "lib/openzeppelin-contracts/contracts/access/Ownable.sol";
 
 /// Routes limit orders to the OrderPlacerProxy and market orders to the UniswapV4Router
 contract MainContract is IOrderMatcher, OApp {
@@ -18,6 +19,8 @@ contract MainContract is IOrderMatcher, OApp {
     OrderPlacerProxy public orderPlacerProxy;
 
     uint32 public eid;
+
+    uint32 public eidSender;
 
     //on Sepolia -> set OptimismSepolia
     //on OptimismSepolia ->set Sepolia
@@ -54,13 +57,13 @@ contract MainContract is IOrderMatcher, OApp {
         orderPlacerProxy.placeLimitOrder{value: msg.value}(orderType, token0, token1, amount, price, sender, _orders);
         
         //////////////////////////////////////////////////////////////////
-        token0.approve(address(this), value);
+        OFTContract(token0).approve(address(this), amount);
 
         bytes memory _payload = abi.encode(orderType, token0, token1, amount, price);
             _lzSend(
-                eidArbitrumSepolia,
+                eidSender,
                 _payload,
-                _options,
+                _orders,
                 // Fee in native gas and ZRO token.
                 MessagingFee(msg.value, 0),
                 // Refund address in case of failed source message.
@@ -93,20 +96,20 @@ contract MainContract is IOrderMatcher, OApp {
 
     }
 
-    mapping(address user => mapping(OFTContract token => amount)) balances;
+    mapping(address user => mapping(OFTContract token => uint256 amount)) balances;
 
     function executeOrder(uint256 orderType,  address token0, address token1, uint256 amount, uint256 price, bytes memory _orders) external {
         if(orderType == 0){//buy 
             //stake token1
-            stake(token1, amount);
+            stake(OFTContract(token1), amount);
             //release token0
-            release(token0, amount * price);
+            release(OFTContract(token0), amount * price);
         }
         else if (orderType == 1){
             //stake token0
-            stake(token0, amount * price);
+            stake(OFTContract(token0), amount * price);
             //release token1
-            release(token1, amount);
+            release(OFTContract(token1), amount);
         }
     }
 
@@ -137,13 +140,13 @@ contract MainContract is IOrderMatcher, OApp {
     /////Providing liquidity/////
 
     function stake(OFTContract token, uint256 value) public {
-        OFTContract.approve(address(this), value);
-        OFTContract.transferFrom(msg.value, address(this), value);
+        OFTContract(token).approve(address(this), value);
+        OFTContract(token).transferFrom(msg.sender, address(this), value);
         balances[msg.sender][token] += value;
     }
 
     function release(OFTContract token, uint256 value) public {
-        OFTContract.transfer(msg.sender, value);
+        OFTContract(token).transfer(msg.sender, value);
         balances[msg.sender][token] -= value;
     }
 
@@ -219,14 +222,14 @@ contract MainContract is IOrderMatcher, OApp {
     /// @inheritdoc IOrderMatcher
     function placeMarketOrder(uint256 orderType, address token0, address token1, uint256 amount) external override {
         address sender = msg.sender;
-        uint256 eid = 0;
+        uint256 eids = 0;
 
         (bool success, bytes memory data) = rustContractAddress.call(
             abi.encodeWithSignature(
                 //user: Address, _eid: U256, order_type: U256, token0: Address, token1: Address, mut amount: U256
                 "placeMarketOrder(address,uint256,uint256,address,address,uint256)",
                 sender,
-                eid,
+                eids,
                 uint256(orderType),
                 token0,
                 token1,
