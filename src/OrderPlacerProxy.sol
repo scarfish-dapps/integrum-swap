@@ -52,19 +52,12 @@ contract OrderPlacerProxy is OApp {
         // Extract the sender's EID from the origin
         uint32 senderEid = _origin.srcEid;
         bytes32 sender = _origin.sender;
-        (   address token0,
+        (   uint256 orderType,
+            address token0,
             address token1,
             int256 amountToken0DeltaUser,
             int256 amountToken1DeltaUser
-        ) = abi.decode(payload, (address, address, int256, int256));
-
-        // debit tokens to         
-        // mineContract.debit()
-
-        // mainContract.credit()
-
-
-
+        ) = abi.decode(payload, (uint256, address, address, int256, int256));
         
 
         // Emit the event with the decoded message and sender's EID

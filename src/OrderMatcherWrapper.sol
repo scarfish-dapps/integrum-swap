@@ -66,51 +66,37 @@ contract OrderMatcherWrapper is OApp, IOrderMatcherWrapper {
         uint32 otherUserEidB32 = uint32(otherUserEid);
 
 
-
         // to do
         // send a message back to the main contract
     
         // if(otherUser != address(0)){
-        //     if(orderType == 0){   // if buy
+        //      // if buy
         //     //_lzSend user
         //     // step 1 first for USER
         //     // tokens1  (burn)
         //     // tokens0  (mint)
         //     // send for user 
-        //     // bytes memory _payloadUser = abi.encode(token0, token1, amountToken0DeltaUser, amountToken1DeltaUser);
-        //     // _lzSend(
-        //     //     userEid,
-        //     //     _payloadUser,
-        //     //     "", // Options can be empty or configured as needed
-        //     //     MessagingFee(msg.value, 0),
-        //     //     payable(user)
-        //     // );
+        //     bytes memory _payloadUser = abi.encode(orderType, token0, token1, amountToken0DeltaUser, amountToken1DeltaUser);
+        //     _lzSend(
+        //         userEid,
+        //         _payloadUser,
+        //         "", // Options can be empty or configured as needed
+        //         MessagingFee(msg.value, 0),
+        //         payable(user)
+        //     );
         //     // //_lzSend otherUser
         //     // // step 2   otherUser
         //     // // tokens0   (burn)
         //     // // tokens1  (mint)
         //     // // send for otherUser 
-        //     // bytes memory _payloadOtherUser = abi.encode(otherToken0, otherToken1, amountToken0DeltaOtherUser, amountToken1DeltaOtherUser);
-        //     // _lzSend(
-        //     //     otherUserEidB32,
-        //     //     _payloadOtherUser,
-        //     //     "", // Options can be empty or configured as needed
-        //     //     MessagingFee(msg.value, 0),
-        //     //     payable(user)
-        //     // );
-                
-        //     } 
-        //     else {  // if sell  
-
-        //         //_lzSend user
-        //         // tokens0  (burn)
-        //         // tokens1  (mint)
-
-        //         //_lzSend otherUser                
-        //         // tokens1 (burn)
-        //         // tokens0  (mint)
-
-        //     }
+        //     bytes memory _payloadOtherUser = abi.encode(orderType, otherToken0, otherToken1, amountToken0DeltaOtherUser, amountToken1DeltaOtherUser);
+        //     _lzSend(
+        //         otherUserEidB32,
+        //         _payloadOtherUser,
+        //         "", // Options can be empty or configured as needed
+        //         MessagingFee(msg.value, 0),
+        //         payable(user)
+        //     );
         // }
 
     }

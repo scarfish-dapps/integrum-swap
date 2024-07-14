@@ -4,9 +4,12 @@ pragma solidity ^0.8.25;
 import {IOrderMatcher} from "./IOrderMatcher.sol";
 import {OrderPlacerProxy} from "./OrderPlacerProxy.sol";
 import {OApp, Origin, MessagingFee } from "lib/LayerZero-v2/packages/layerzero-v2/evm/oapp/contracts/oapp/OApp.sol";
+import { OFT } from "@layerzerolabs/lz-evm-oapp-v2/contracts/oft/OFT.sol";
+import { OFTContract } from "./OFTContract.sol";
+
 
 /// Routes limit orders to the OrderPlacerProxy and market orders to the UniswapV4Router
-contract MainContract is IOrderMatcher {
+contract MainContract is IOrderMatcher, OApp {
 
     address public rustContractAddress;
 
@@ -16,7 +19,11 @@ contract MainContract is IOrderMatcher {
 
     uint32 public eid;
 
-    constructor( address _orderPlacerProxy) {
+    //on Sepolia -> set OptimismSepolia
+    //on OptimismSepolia ->set Sepolia
+    mapping(uint32 eid => address Blockchain) connections;
+
+    constructor(address _endpoint, address _orderPlacerProxy, address _owner) OApp(_endpoint, _owner) Ownable(_owner){
         orderPlacerProxy = OrderPlacerProxy(_orderPlacerProxy);
         deployer = msg.sender;
     }
@@ -32,6 +39,11 @@ contract MainContract is IOrderMatcher {
         orderPlacerProxy= OrderPlacerProxy(_orderPlacerProxy);
     }
 
+    function setBlockchain(uint32 eid, address blockchain) {
+        require(msg.sender == deployer, "na na na");
+        connections[eid] = blockchain;
+    }
+
     /// @inheritdoc IOrderMatcher
     function placeLimitOrder(uint256 orderType, address token0, address token1, uint256 amount, uint256 price, bytes memory _orders) external payable override 
     returns (OrderResponse memory) {
@@ -40,10 +52,11 @@ contract MainContract is IOrderMatcher {
         uint256 eid = 0;
 
         orderPlacerProxy.placeLimitOrder{value: msg.value}(orderType, token0, token1, amount, price, sender, _orders);
+        
+        //TODO implement sendMsg
 
-        //(orders_length,         user,         other_eid,       other_user,      amount_token0_delta_user,     amount_token1_delta_user,    amount_token0_delta_other_user,   amount_token1_delta_other_user,         other_token0,        other_token1)
-       
-        // emit OrderPlaced(orderId, msg.sender, orderType, token0, token1, amount, price);
+        // OFTContract(token0).approve(address(this), amount);
+        // OFTContract(token0).send();
 
         (   uint256 orderId,
             address user,
@@ -63,8 +76,37 @@ contract MainContract is IOrderMatcher {
             amount_token0_delta_other_users: amountToken0DeltaOtherUser,
             amount_token1_delta_other_users: amountToken1DeltaOtherUser
         });
+
+
     }
 
+    mapping(address user => mapping(OFTContract token => amount)) balances;
+
+    function executeOrder(uint256 orderType,  address token0, address token1, uint256 amount, uint256 price, bytes memory _orders) external {
+        if(orderType == 0){//buy 
+            //stake token1
+            stake(token1, amount);
+            //release token0
+            release(token0, amount * price);
+        }
+        else if (orderType == 1){
+            //stake token0
+            stake(token0, amount * price);
+            //release token1
+            release(token1, amount);
+        }
+    }
+
+    function stake(OFTContract token, uint256 value) public {
+        OFTContract.approve(address(this), value);
+        OFTContract.transferFrom(msg.value, address(this), value);
+        balances[msg.sender][token] += value;
+    }
+
+    function release(OFTContract token, uint256 value) public {
+        OFTContract.transfer(msg.sender, value);
+        balances[msg.sender][token] -= value;
+    }
 
     function placeLimitOrder2(uint256 orderType, address token0, address token1, uint256 amount, uint256 price, bytes memory _orders) external payable  
     {
