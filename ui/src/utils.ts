@@ -57,31 +57,43 @@ export const getTokenByAddress = (address: string): Token | undefined => {
 
 export const CHAINS = [
 	{
-		chainId: 421614,
-		name: 'ArbSepolia',
-		currency: 'ETH',
-		explorerUrl: 'https://sepolia.arbiscan.io/',
-		rpcUrl: 'https://sepolia-rollup.arbitrum.io/rpc'
-	},
-	{
 		chainId: 11155111,
 		name: 'Sepolia',
+		img: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAbCAMAAABY1h8eAAAAV1BMVEVHcEw2P/o2P/k2P/k2P/o2P/k2P/s2P/w2P/s2P/o2P/k2P/k2P/klMPnw8P719f8uOPmwsvzs7P6go/wYJfl2evvMzf2Jjfvh4v5bYfo/SPm6vP1IT/nT7oRhAAAADHRSTlMAbPiI3sFVHjnsg6KEiqV2AAAA60lEQVQokYVS7RKDIAxDJyKOUr5U5nz/55wToeruXH5wQK5NKGEso3twqZTkj45dUdWqQFYnSkh1QiOIa9UPuhuusIJu5pn2qTPphfENpLv5LEczIL5MObYrSW+A0bkxHEs7UgkDOpyoVLC+7JcY1lKnClsxTm7QK+30uzR+sobcODReO/LECwnRuQgQESNcSdhqAJZhGKhy11zQaQs+Yc6a/e5m9Rks6i9w91Sld5oJNU6vxK1s6izShIy31ofJZmyTaPJsDQBsS4LJs2WXFBxGe/7PI8T/JNxn6D5919y2P7H+Jr6uJe+p4wcuvx7WFAdqoAAAAABJRU5ErkJggg==',
 		currency: 'ETH',
 		explorerUrl: 'https://sepolia.etherscan.io',
 		rpcUrl: 'https://rpc.sepolia.org'
 	},
 	{
-		chainId: 1,
-		name: 'Ethereum Mainnet',
-		currency: 'ETH',
-		explorerUrl: 'https://etherscan.io',
-		rpcUrl: 'https://ethereum-rpc.publicnode.com'
+		chainId: 44787,
+		name: 'Celo',
+		img: 'https://s2.coinmarketcap.com/static/img/coins/64x64/5567.png',
+		currency: 'CELO',
+		explorerUrl: 'https://explorer.celo.org/alfajores',
+		rpcUrl: 'https://alfajores-forno.celo-testnet.org'
 	},
 	{
-		chainId: 97,
-		name: 'BSC Testnet',
-		currency: 'BNB',
-		explorerUrl: 'https://explorer.binance.org/smart-testnet',
-		rpcUrl: 'https://data-seed-prebsc-1-s1.binance.org:8545'
+		chainId: 84532,
+		name: 'Base',
+		img: 'https://s2.coinmarketcap.com/static/img/coins/64x64/27716.png',
+		currency: 'ETH',
+		explorerUrl: 'https://base-sepolia.blockscout.com',
+		rpcUrl: 'https://sepolia.base.org'
+	},
+	{
+		chainId: 11155420,
+		name: 'Optimism',
+		img:'https://s2.coinmarketcap.com/static/img/coins/64x64/11840.png',
+		currency: 'ETH',
+		explorerUrl: 'https://optimism-sepolia.blockscout.com/',
+		rpcUrl: 'https://endpoints.omniatech.io/v1/op/sepolia/public'
+	},
+	{
+		chainId: 59141,
+		name: 'Linea',
+		img: 'https://s2.coinmarketcap.com/static/img/coins/64x64/27657.png',
+		currency: 'ETH',
+		explorerUrl: 'https://explorer.sepolia.linea.build/',
+		rpcUrl: 'https://linea-sepolia.blockpi.network/v1/rpc/public'
 	}
 ];

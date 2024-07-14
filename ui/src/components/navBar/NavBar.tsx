@@ -4,7 +4,7 @@ import S from './index.module.css';
 import { BrowserProvider, formatEther } from 'ethers';
 import { useWeb3ModalAccount, useWeb3ModalProvider, useWeb3Modal } from "@web3modal/ethers/react";
 import WalletProfile from "../../components/walletProfile/WalletProfile";
-import { useAppDispatch } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setBalance } from "../../store/user/userSlice";
 import { useNavigate } from 'react-router-dom';
 
@@ -15,6 +15,7 @@ function NavBar() {
 	const { open, close } = useWeb3Modal()
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
+	const selectedNetwork = useAppSelector((state) => state.user.chain);
 	
 	useEffect(() => {
 		const fetchBalance = async () => {
@@ -29,7 +30,7 @@ function NavBar() {
 		if (isConnected) {
 			fetchBalance();
 		}
-	}, [walletProvider, address, isConnected]);
+	}, [walletProvider, address, isConnected, selectedNetwork]);
 	
 	return (
 		<nav className={`navbar ${S.navBar} border-0 rounded-5 z-3`}>
