@@ -68,4 +68,14 @@ contract MainContract is IOrderMatcher {
             )
         );
     }
+
+    function getOrdersLength() external view override returns (uint256) {
+        (bool success, bytes memory data) = rustContractAddress.staticcall(
+            abi.encodeWithSignature("getOrdersLength()")
+        );
+
+        require(success, "Failed to get orders length");
+
+        return abi.decode(data, (uint256));
+    }
 }

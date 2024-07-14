@@ -44,4 +44,8 @@ contract OrderPlacerProxy is IOrderMatcher {
     function setHook(IEntryPointMinimal _hook) external {
         hook = _hook;
     }
+
+    function getOrdersLength() external view override returns (uint256) {
+        return 0;
+    }
 }
