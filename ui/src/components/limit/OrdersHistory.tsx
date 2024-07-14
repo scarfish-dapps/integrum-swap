@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import styles from "./index.module.css";
 import { useWeb3ModalProvider } from "@web3modal/ethers/react";
 import { getTokenByAddress, OrderType, trimAddress } from "../../utils";
-import { GET_CONTRACT } from "../../ContractUtils";
+import { CONTRACT_ADDRESS, GET_CONTRACT } from "../../ContractUtils";
 import { setLoading, setTransactionHash } from "../../store/spiner/spinerSlice";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import ModalComponent from "../modal/Modal";
-import { formatEther } from "ethers";
+import { Contract, formatEther, JsonRpcProvider } from "ethers";
+import Project from "../../abi/Abi.json";
 
 interface OrderResponse {
 	id: string;
@@ -43,7 +44,9 @@ const OrdersHistory: React.FC = () => {
 	}, [walletProvider, transactionHash]);
 	
 	const getOrdersLength = async (): Promise<number> => {
-		const contract = await GET_CONTRACT(walletProvider);
+		const provider = new JsonRpcProvider('https://arbitrum-sepolia.blockpi.network/v1/rpc/public');
+		const contract = new Contract(CONTRACT_ADDRESS, Project, provider);
+		
 		const ordersLength = await contract.getOrdersLength();
 		console.log('Orders length:', ordersLength);
 		return Number(ordersLength);
@@ -51,7 +54,10 @@ const OrdersHistory: React.FC = () => {
 	
 	const getOrders = async (length: number) => {
 		setIsLoading(true);
-		const contract = await GET_CONTRACT(walletProvider);
+		
+		const provider = new JsonRpcProvider('https://arbitrum-sepolia.blockpi.network/v1/rpc/public');
+		const contract = new Contract(CONTRACT_ADDRESS, Project, provider);
+		
 		try {
 			const ordersData = await Promise.all(
 				Array.from({ length }, (_, index) => contract.retrieveLimitOrder(index))
