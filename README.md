@@ -106,10 +106,10 @@ By integrating Blockscout, we ensure that users can easily verify and audit tran
 
 | Chain            | MainContract                                | OrderPlacerProxy                              
 | ---------------- | ------------------------------------------- | ------------------------------------------ |
-| Ethereum         | 0xAEC85ff2A37Ac2E0F277667bFc1Ce1ffFa6d782A  | 0x3A274DD833726D9CfDb6cBc23534B2cF5e892347 |                                          
-| Linea            | 0xAEC85ff2A37Ac2E0F277667bFc1Ce1ffFa6d782A  | 0x3A274DD833726D9CfDb6cBc23534B2cF5e892347 |                                          
-| Optimism         | 0x24b8cd32f93aC877D4Cc6da2369d73a6aC47Cb7b  | 0x58EE92DaDdF00334da39fb4Fab164c8662C794AD |                                          
-| Scroll           | 0xf4661D0776Ee5171956b25417F7E320fE365C21E  | 0x3a6B3Aff418C7E50eE9F852D0bc7119296cc3644 |                                          
-| Base             | 0xf4661D0776Ee5171956b25417F7E320fE365C21E  | 0x3a6B3Aff418C7E50eE9F852D0bc7119296cc3644 |                                          
-| Cello            | 0xf4661D0776Ee5171956b25417F7E320fE365C21E  | 0x3a6B3Aff418C7E50eE9F852D0bc7119296cc3644 |                                          
-| Binance          | 0xf4661D0776Ee5171956b25417F7E320fE365C21E  | 0x3a6B3Aff418C7E50eE9F852D0bc7119296cc3644 |
+| Ethereum         | 0xAEC85ff2A37Ac2E0F277667bFc1Ce1ffFa6d782A  | 0xc42578B466355875F1F24a3D98aA78e0DA4f2232 |                                          
+| Linea            | 0xAEC85ff2A37Ac2E0F277667bFc1Ce1ffFa6d782A  | 0x36DE04BFBc2AB1cE497c063E7560137c7f7579fB |                                          
+| Optimism         | 0x24b8cd32f93aC877D4Cc6da2369d73a6aC47Cb7b  | 0xBD345337127768a4578F8D3753bB182E4Cc513E8 |                                          
+| Scroll           | 0xf4661D0776Ee5171956b25417F7E320fE365C21E  | 0x36DE04BFBc2AB1cE497c063E7560137c7f7579fB |                                          
+| Base             | 0xf4661D0776Ee5171956b25417F7E320fE365C21E  | 0xBD345337127768a4578F8D3753bB182E4Cc513E8 |                                          
+| Cello            | 0xf4661D0776Ee5171956b25417F7E320fE365C21E  | 0xD1E1F57E41A54c930664Ed799c753e330734Da66 |                                          
+
